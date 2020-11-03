@@ -364,7 +364,7 @@
           "properties" : {
             "argumentsStrategy" : "Command Arguments Property",
             "Max Attribute Length" : "256",
-            "Command Path" : "/tmp/git/NifiHelloWorld/Archive/server2.sh",
+            "Command Path" : "/tmp/git/NifiHelloWorld/Archive/server.sh",
             "Argument Delimiter" : ";",
             "Ignore STDIN" : "false"
           },
