@@ -551,7 +551,7 @@
           },
           "properties" : {
             "Create Missing Directories" : "true",
-            "Directory" : "/tmp/logs/",
+            "Directory" : "/tmp/logs2/",
             "Conflict Resolution Strategy" : "replace"
           },
           "propertyDescriptors" : {
