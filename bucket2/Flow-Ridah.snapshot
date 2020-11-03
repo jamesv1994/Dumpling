@@ -551,7 +551,7 @@
           },
           "properties" : {
             "Create Missing Directories" : "true",
-            "Directory" : "/Users/drice/Downloads/Software/nifi-1.1.0.2.1.2.0-10/logs",
+            "Directory" : "/tmp/logs/",
             "Conflict Resolution Strategy" : "replace"
           },
           "propertyDescriptors" : {
