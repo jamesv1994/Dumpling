@@ -19,7 +19,7 @@ jobs:
       - name: get changed files
         id: getfile
         run: |
-          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ steps.retrieve_last_hash.outputs.last_hash }} $GITHUB_SHA | xargs)"
+          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ steps.retrieve_last_hash.outputs.last_hash }} $GITHUB_SHA dags | xargs)"
 
       - name: echo the output
         run: | 
