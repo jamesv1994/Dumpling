@@ -23,7 +23,7 @@ jobs:
 
       - name: echo the output
         run: | 
-          for file in "${{ steps.getfile.outputs.files }}"
+          for file in ${{ steps.getfile.outputs.files }}
           do
             echo "Current file is: $file";
           done; 
