@@ -23,4 +23,7 @@ jobs:
 
       - name: echo the output
         run: | 
-          echo "${{ steps.getfile.outputs.files }}"
+          for file in "${{ steps.getfile.outputs.files }}"
+          do
+            echo $file;
+          done; 
