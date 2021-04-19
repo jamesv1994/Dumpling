@@ -29,4 +29,5 @@ jobs:
           done; 
 
       - name: Echo GITHUB_REF
-        run: echo $($GITHUB_REF | awk -F'/' '{print $NF}')
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo $GITHUB_REF | awk -F'/' '{print $NF}'
