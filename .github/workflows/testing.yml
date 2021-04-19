@@ -22,12 +22,18 @@ jobs:
           echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ steps.retrieve_last_hash.outputs.last_hash }} $GITHUB_SHA dags | xargs)"
 
       - name: echo the output
-        run: | 
+        run: echo ${{ steps.getfile.outputs.files }}
+
+      - name: Verify no prod deployment
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo NO PROD DEPLOYMENTS SUPPORTED; exit 1;
+      
+      - name: deploy DAG Scripts
+        run: |
+          environment=$(echo $GITHUB_REF | awk -F'/' '{print $NF}'); 
+          echo "activating Ansible VENV"; 
+          echo "cd´ing into automation checkout directory";
           for file in ${{ steps.getfile.outputs.files }}
           do
-            echo "Current file is: $file";
+            echo "ansible-playbook airflow_deploy_dags -e \" airflow_environment=$environment dag_file=$file \"";
           done; 
-
-      - name: Echo GITHUB_REF
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: echo $GITHUB_REF | awk -F'/' '{print $NF}'
