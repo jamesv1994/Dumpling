@@ -10,10 +10,16 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
+
+      - name: retrieve last deployed hash for diff
+        id: retrieve_last_hash
+        run: |
+          echo "::set-output name=last_hash::$(cat .doesnotexist 2>/dev/null || echo $(git hash-object -t tree /dev/null))"
+
       - name: get changed files
         id: getfile
         run: |
-          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r 4b825dc642cb6eb9a060e54bf8d69288fbee4904 $GITHUB_SHA | xargs)"
+          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ steps.retrieve_last_hash.outputs.last_hash }} $GITHUB_SHA | xargs)"
 
       - name: echo the output
         run: | 
