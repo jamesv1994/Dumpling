@@ -2,6 +2,10 @@ name: Testing mechanism for retrieving changed files
 on: 
   push: 
     branches: [main, dev, test]
+  paths: 
+    - 'dags/**'
+    - '!dags/additional_scripts/**'
+
   workflow_dispatch: 
 
 jobs:
