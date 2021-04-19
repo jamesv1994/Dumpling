@@ -1,0 +1,43 @@
+name: Testing mechanism for retrieving changed files
+on: 
+  push: 
+    branches: [main, dev, test]
+    paths:
+      - 'dags/additional_scripts/**'
+      
+  workflow_dispatch: 
+
+jobs:
+  deploy_airflow_dags:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: retrieve last deployed hash for diff
+        id: retrieve_last_hash
+        run: |
+          echo "::set-output name=last_hash::$(cat .doesnotexist 2>/dev/null || echo $(git hash-object -t tree /dev/null))"
+
+      - name: get changed files
+        id: getfile
+        run: |
+          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ steps.retrieve_last_hash.outputs.last_hash }} $GITHUB_SHA dags/additional_scripts | xargs)"
+
+      - name: echo the output
+        run: echo ${{ steps.getfile.outputs.files }}
+
+      - name: Verify no prod deployment
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo NO PROD DEPLOYMENTS SUPPORTED; exit 1;
+      
+      - name: deploy DAG Scripts
+        run: |
+          environment=$(echo $GITHUB_REF | awk -F'/' '{print $NF}'); 
+          echo "activating Ansible VENV"; 
+          echo "cd´ing into automation checkout directory";
+          echo "ansible-playbook deploy_additional_dag_files.yml -e \" airflow_environment=$environment script_files=${{ steps.getfile.outputs.files }} \"";
+          # for file in ${{ steps.getfile.outputs.files }}
+          # do
+          #   echo "ansible-playbook deploy_additional_dag_files.yml -e \" airflow_environment=$environment script_files=$file \"";
+          # done; 
