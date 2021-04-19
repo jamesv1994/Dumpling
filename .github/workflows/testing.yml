@@ -1,7 +1,7 @@
 name: Testing mechanism for retrieving changed files
 on: 
   push: 
-    branches: [main]
+    branches: [main, dev, test]
   workflow_dispatch: 
 
 jobs:
