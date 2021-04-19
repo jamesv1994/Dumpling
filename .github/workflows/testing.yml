@@ -5,7 +5,7 @@ on:
   workflow_dispatch: 
 
 jobs:
-  pre-reqs:
+  deploy_airflow_dags:
     runs-on: ubuntu-latest
     
     steps:
@@ -29,4 +29,5 @@ jobs:
           done; 
 
       - name: Echo GITHUB_REF
-        run: echo $GITHUB_REF
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo $GITHUB_REF | awk -F'/' '{print $NF}'
