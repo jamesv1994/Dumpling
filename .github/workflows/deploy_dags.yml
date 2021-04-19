@@ -1,4 +1,4 @@
-name: Testing mechanism for retrieving changed files
+name: Deploy Apache Airflow DAGs
 on: 
   push: 
     branches: [main, dev, test]
