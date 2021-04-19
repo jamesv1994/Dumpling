@@ -23,4 +23,4 @@ jobs:
 
       - name: echo the output
         run: | 
-          echo ${{ steps.getfile.outputs.files }}
+          echo "${{ steps.getfile.outputs.files }}"
