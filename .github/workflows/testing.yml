@@ -25,5 +25,5 @@ jobs:
         run: | 
           for file in "${{ steps.getfile.outputs.files }}"
           do
-            echo $file;
+            echo "Current file is: $file";
           done; 
