@@ -1,4 +1,4 @@
-name: Testing mechanism for retrieving changed files
+name: Deploy Apache Airflow DAGs
 on: 
   push: 
     branches: [main, dev, test]
@@ -36,8 +36,15 @@ jobs:
         run: |
           environment=$(echo $GITHUB_REF | awk -F'/' '{print $NF}'); 
           echo "activating Ansible VENV"; 
-          echo "cd´ing into automation checkout directory";
           for file in ${{ steps.getfile.outputs.files }}
-          do
-            echo "ansible-playbook airflow_deploy_dags -e \" airflow_environment=$environment dag_file=$file \"";
-          done; 
+          do 
+            cat $file; 
+          done;
+          # source /appdata/python_venv/ansible-runner/bin/activate;
+          # echo "cd´ing into automation checkout directory";
+          # /appdata/github
+          # cd /appdata/github/n2125168/automation/
+          # for file in ${{ steps.getfile.outputs.files }}
+          # do
+          #   echo "ansible-playbook airflow_deploy_dags -e \" airflow_environment=$environment dag_file=$file \"";
+          # done; 

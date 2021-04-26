@@ -1,14 +1,14 @@
-name: Testing mechanism for retrieving changed files
+name: Deploy additional Dag files
 on: 
   push: 
     branches: [main, dev, test]
     paths:
       - 'dags/additional_scripts/**'
-      
+
   workflow_dispatch: 
 
 jobs:
-  deploy_airflow_dags:
+  deploy_additional_dag_files:
     runs-on: ubuntu-latest
     
     steps:
