@@ -11,13 +11,16 @@ jobs:
   deploy_additional_dag_files:
     runs-on: ubuntu-latest
     
+    env: 
+      GITHUB_HASH_LOCATION: /appdata/hashes/airflow/additional_files_dev
+    
     steps:
       - uses: actions/checkout@v2
 
       - name: retrieve last deployed hash for diff
         id: retrieve_last_hash
         run: |
-          echo "::set-output name=last_hash::$(cat .doesnotexist 2>/dev/null || echo $(git hash-object -t tree /dev/null))"
+          echo "::set-output name=last_hash::$(cat $GITHUB_HASH_LOCATION 2>/dev/null || echo $(git hash-object -t tree /dev/null))"
 
       - name: get changed files
         id: getfile
@@ -44,3 +47,11 @@ jobs:
           # do
           #   echo "ansible-playbook deploy_additional_dag_files.yml -e \" airflow_environment=$environment script_files=$file \"";
           # done; 
+          
+      - name: Set new Hash for delta-deployments
+        run: echo $GITHUB_SHA > $GITHUB_HASH_LOCATION
+      
+      
+      
+      
+      
