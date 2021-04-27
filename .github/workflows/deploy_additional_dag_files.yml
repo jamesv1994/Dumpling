@@ -27,6 +27,9 @@ jobs:
       - name: echo the output
         run: echo ${{ steps.getfile.outputs.files }}
 
+      - name: echo the output
+        run: echo $(ls $GITHUB_WORKSPACE)
+
       - name: Verify no prod deployment
         if: ${{ github.ref == 'refs/heads/main' }}
         run: echo NO PROD DEPLOYMENTS SUPPORTED; exit 1;
