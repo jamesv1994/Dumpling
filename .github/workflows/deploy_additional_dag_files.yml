@@ -2,8 +2,8 @@ name: Deploy additional Dag files
 on: 
   push: 
     branches: [main, dev, test]
-    paths:
-      - 'dags/additional_scripts/**'
+#     paths:
+#       - 'dags/additional_scripts/**'
 
   workflow_dispatch: 
 
