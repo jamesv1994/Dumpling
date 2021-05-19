@@ -14,6 +14,7 @@ jobs:
       - name: Grep for common token patterns
         id: pattern_scan
         run: |
+
           echo "::set-output name=grep_count::$(egrep -R -f config/grep.conf * $(for i in `cat config/exclude_from_grep.conf`; do  echo --exclude=$i; done) | wc -l)"
      
       - name: "Matches were found"
@@ -21,6 +22,6 @@ jobs:
         run: |
           echo 
           echo "${{ steps.pattern_scan.outputs.grep_count }} Matches were found, please view log output and resolve issues"
-          exit 1
+          egrep -R -f config/grep.conf * $(for i in `cat config/exclude_from_grep.conf`; do  echo --exclude=$i; done)
         
       
