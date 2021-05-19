@@ -23,5 +23,5 @@ jobs:
           echo 
           echo "${{ steps.pattern_scan.outputs.grep_count }} Matches were found, please view log output and resolve issues"
           egrep -R -f config/grep.conf * $(for i in `cat config/exclude_from_grep.conf`; do  echo --exclude=$i; done)
-        
+          exit 1
       
