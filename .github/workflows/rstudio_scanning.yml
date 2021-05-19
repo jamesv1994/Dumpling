@@ -16,7 +16,10 @@ jobs:
           egrep -R -f config/grep.conf *
           echo "::set-output name=exit_code::$?"
       
+      # Exit code from Grep: 0 => Match found; 1 => No match found; 2 => Error in matching
       - name: "Outputting last exit Code"
+        if: ${{ steps.pattern_scan.outputs.exit_code }} == 0
         run: |
-          ${{ steps.pattern_scan.outputs.exit_code }}
+          echo "Matches were found, please view log output and resolve issues"
+        
       
