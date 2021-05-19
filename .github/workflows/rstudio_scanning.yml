@@ -1,0 +1,22 @@
+name: Try security Scanning 
+on: 
+  push: 
+    branches: [security*]
+  workflow_dispatch: 
+
+jobs:
+  rstudio_scanning:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Grep for common token patterns
+        id: pattern_scan
+        run: |
+          egrep -R -f config/grep.conf *
+          echo "::set-output name=exit_code::$?"
+      
+      - name: "Outputting last exit Code"
+        run: |
+          ${{ steps.pattern_scan.outputs.exit_code }}
+      
