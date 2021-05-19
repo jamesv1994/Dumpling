@@ -15,10 +15,8 @@ jobs:
         id: pattern_scan
         run: |
           egrep -R -f config/grep.conf * $(for i in `cat config/exclude_from_grep.conf`; do  echo --exclude=$i; done)
-          grep_status=$?
-          echo "nonsense"
           echo "::set-output name=exit_code::$?"
-          
+        continue-on-error: true
       
       # Exit code from Grep: 0 => Match found; 1 => No match found; 2 => Error in matching
       - name: "Outputting last exit Code"
