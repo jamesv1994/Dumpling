@@ -10,10 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      # We have an exclude files to exclude certain files in the grep
       - name: Grep for common token patterns
         id: pattern_scan
         run: |
-          egrep -R -f config/grep.conf *
+          egrep -R -f config/grep.conf * $(for i in `cat config/exclude_from_grep.conf`; do  echo --exclude=$i; done)
           echo "::set-output name=exit_code::$?"
       
       # Exit code from Grep: 0 => Match found; 1 => No match found; 2 => Error in matching
