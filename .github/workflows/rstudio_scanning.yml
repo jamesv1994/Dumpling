@@ -14,16 +14,13 @@ jobs:
       - name: Grep for common token patterns
         id: pattern_scan
         run: |
-          egrep -R -f config/grep.conf * $(for i in `cat config/exclude_from_grep.conf`; do  echo --exclude=$i; done)
-          grep_code=$?
-          echo "::set-output name=exit_code::$(echo $grep_code)"
-        continue-on-error: true
-      
+          echo "::set-output name=grep_count::$(egrep -R -f config/grep.conf * $(for i in `cat config/exclude_from_grep.conf`; do  echo --exclude=$i; done) | wc -l)"
+     
       # Exit code from Grep: 0 => Match found; 1 => No match found; 2 => Error in matching
       - name: "Outputting last exit Code"
-        #if: ${{ steps.pattern_scan.outputs.exit_code }} == 0
+        #if: ${{ steps.pattern_scan.outputs.grep_count }} != 0
         run: |
-          echo ${{ steps.pattern_scan.outputs.exit_code }}
+          echo ${{ steps.pattern_scan.outputs.grep_count }}
           echo "Matches were found, please view log output and resolve issues"
         
       
