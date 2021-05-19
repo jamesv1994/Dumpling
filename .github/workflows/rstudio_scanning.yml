@@ -18,7 +18,7 @@ jobs:
           echo "::set-output name=grep_count::$(egrep -R -f config/grep.conf * $(for i in `cat config/exclude_from_grep.conf`; do  echo --exclude=$i; done) | wc -l)"
      
       - name: "Matches were found"
-        if: ${{ steps.pattern_scan.outputs.grep_count }} != 0
+        if: ${{ steps.pattern_scan.outputs.grep_count != 0 }}
         run: |
           echo 
           echo "${{ steps.pattern_scan.outputs.grep_count }} Matches were found, please view log output and resolve issues"
