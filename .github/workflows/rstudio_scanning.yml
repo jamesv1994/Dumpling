@@ -16,11 +16,11 @@ jobs:
         run: |
           echo "::set-output name=grep_count::$(egrep -R -f config/grep.conf * $(for i in `cat config/exclude_from_grep.conf`; do  echo --exclude=$i; done) | wc -l)"
      
-      # Exit code from Grep: 0 => Match found; 1 => No match found; 2 => Error in matching
-      - name: "Outputting last exit Code"
-        #if: ${{ steps.pattern_scan.outputs.grep_count }} != 0
+      - name: "Matches were found"
+        if: ${{ steps.pattern_scan.outputs.grep_count }} != 0
         run: |
-          echo ${{ steps.pattern_scan.outputs.grep_count }}
-          echo "Matches were found, please view log output and resolve issues"
+          echo 
+          echo "${{ steps.pattern_scan.outputs.grep_count }} Matches were found, please view log output and resolve issues"
+          exit 1
         
       
