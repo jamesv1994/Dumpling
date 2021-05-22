@@ -1,29 +1,31 @@
-name: Deploy Apache Airflow DAGs
-on: 
-  push: 
-    branches: [main, dev, test]
-    paths: 
-      - 'dags/**'
-      - '!dags/additional_scripts/**'
+name: Deploying Apache Airflow
+on:
+  push:
+    branches: [dev]
 
-  workflow_dispatch: 
+  # Manual workflow execution for testing
+  workflow_dispatch:
 
 jobs:
-  deploy_airflow_dags:
-    runs-on: ubuntu-latest
-    
+  build:
+    runs-on: self-hosted
+    env: 
+      GITHUB_HASH_LOCATION: /appdata/hashes/airflow_dags/additional_files_dev
+
+
     steps:
+      # Get the latest revision
       - uses: actions/checkout@v2
 
       - name: retrieve last deployed hash for diff
         id: retrieve_last_hash
         run: |
-          echo "::set-output name=last_hash::$(cat .doesnotexist 2>/dev/null || echo $(git hash-object -t tree /dev/null))"
+          echo "::set-output name=last_hash::$(cat $GITHUB_HASH_LOCATION 2>/dev/null || echo $(git hash-object -t tree /dev/null))"
 
       - name: get changed files
         id: getfile
         run: |
-          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ steps.retrieve_last_hash.outputs.last_hash }} $GITHUB_SHA dags | xargs)"
+          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ steps.retrieve_last_hash.outputs.last_hash }} $GITHUB_SHA dags/additional_scripts | xargs)"
 
       - name: echo the output
         run: echo ${{ steps.getfile.outputs.files }}
@@ -31,20 +33,33 @@ jobs:
       - name: Verify no prod deployment
         if: ${{ github.ref == 'refs/heads/main' }}
         run: echo NO PROD DEPLOYMENTS SUPPORTED; exit 1;
+
       
+      # # Exeuction of _schema_db2_deploy.yml Ansible playbook, so that we always have the correct python scripts deployed
+      # - name: Execute the _schema_db2_deploy.yml  
+      #   run: "/appdata/python_venv/pkg_management_v0.1/bin/activate && cd /appdata/github/automation/"
+
+      - name: "Make sure depl temp dir exists"
+        run: "echo mkdir -p /temp/airflow_depl/"
+
+      - name: "Copy over the files to depl temp dir"
+        run: "echo cp ${{ steps.getfile.outputs.files }} /temp/airflow_depl/"
+
       - name: deploy DAG Scripts
         run: |
-          environment=$(echo $GITHUB_REF | awk -F'/' '{print $NF}'); 
-          echo "activating Ansible VENV"; 
-          for file in ${{ steps.getfile.outputs.files }}
-          do 
-            cat $file; 
-          done;
-          # source /appdata/python_venv/ansible-runner/bin/activate;
-          # echo "cd´ing into automation checkout directory";
-          # /appdata/github
-          # cd /appdata/github/n2125168/automation/
-          # for file in ${{ steps.getfile.outputs.files }}
-          # do
-          #   echo "ansible-playbook airflow_deploy_dags -e \" airflow_environment=$environment dag_file=$file \"";
-          # done; 
+          # environment=$(echo $GITHUB_REF | awk -F'/' '{print $NF}');
+          # For now hardcoding to DEV
+          environment=dev 
+          # echo "activating Ansible VENV"; 
+          source /appdata/python_venv/pkg_management_v0.1/bin/activate
+          echo "Executing Playbook";
+          echo ansible-playbook /appdata/github/n2125168/automation/airflow_deploy_dags_github_runner.yml -i /appdata/github/n2125168/automation/inventories/server.yaml -e "dag_src=$GITHUB_WORKSPACE/dags/additional_scripts/ airflow_environment=$environment";
+
+      - name: "Clear out the depl temp dir"
+        run: "echo rm -rf /temp/airflow_depl/*"
+
+      - name: Create the hash-directory (if not exists)
+        run: echo mkdir -p $(dirname $GITHUB_HASH_LOCATION)
+
+      - name: Set new Hash for delta-deployments
+        run: echo $GITHUB_SHA > $GITHUB_HASH_LOCATION
