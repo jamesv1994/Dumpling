@@ -57,7 +57,7 @@ jobs:
       # Make sure, that no other location will be removed!
       - name: "Clear out the depl temp dir"
         run: "echo rm -rf $TEMP_LOCATION_CHANGED_FILES/*"
-        if: ${{ $TEMP_LOCATION_CHANGED_FILES == '/tmp/airflow_depl/' }}
+        if: ${{ TEMP_LOCATION_CHANGED_FILES == '/tmp/airflow_depl/' }}
 
       - name: Create the hash-directory (if not exists)
         run: echo mkdir -p $(dirname $GITHUB_HASH_LOCATION)
