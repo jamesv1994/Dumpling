@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy_airflow_dags:
-    runs-on: [self-hosted, "apache-airflow-{{ $GITHUN_REF }}"]
+    runs-on: [self-hosted, "apache-airflow-{{ GITHUB_REF }}"]
     env: 
       GITHUB_HASH_LOCATION: /appdata/hashes/airflow_dags/additional_files_dev
       TEMP_LOCATION_CHANGED_FILES: /tmp/airflow_depl/
